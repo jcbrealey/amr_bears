@@ -1,0 +1,18 @@
+ARO.Accession	CVTERM.ID	Model.Sequence.ID	Model.ID	Model.Name	ARO.Name	Protein.Accession	DNA.Accession	AMR.Gene.Family	Drug.Class	Resistance.Mechanism
+ARO:3004144	NA	NA	NA	NA	AxyY	NA	AFRQ01000061.1	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;fluoroquinolone antibiotic;aminoglycoside antibiotic;cephalosporin	antibiotic efflux
+ARO:3000794	NA	NA	NA	NA	mdtC	NA	U00096	resistance-nodulation-cell division (RND) antibiotic efflux pump	aminocoumarin antibiotic	antibiotic efflux
+ARO:3000801	NA	NA	NA	NA	MexD	NA	U57969	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;fluoroquinolone antibiotic;aminoglycoside antibiotic;cephalosporin;penam;tetracycline antibiotic;aminocoumarin antibiotic;diaminopyrimidine antibiotic;phenicol antibiotic	antibiotic efflux
+ARO:3000804	NA	NA	NA	NA	MexF	NA	NC_002516	resistance-nodulation-cell division (RND) antibiotic efflux pump	fluoroquinolone antibiotic;diaminopyrimidine antibiotic;phenicol antibiotic	antibiotic efflux
+ARO:3003699	NA	NA	NA	NA	mexQ	NA	AB219524.1	resistance-nodulation-cell division (RND) antibiotic efflux pump	e antibiotic;carbapenem;tetracycline antibiotic;acridine dye;diaminopyrimidine antibiotic;phenicol antibiotic	antibiotic efflux
+ARO:3003033	NA	NA	NA	NA	mexY	NA	AB015853	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;fluoroquinolone antibiotic;aminoglycoside antibiotic;carbapenem;cephalosporin;cephamycin;penam;tetracycline antibiotic;acridine dye;phenicol antibiotic	antibiotic efflux
+ARO:3000811	NA	NA	NA	NA	mtrD	NA	NC_003112.2	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;penam	antibiotic efflux
+ARO:3004074	NA	NA	NA	NA	MuxB	NA	NC_002516.2	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;monobactam;tetracycline antibiotic;aminocoumarin antibiotic	antibiotic efflux
+ARO:3004075	NA	NA	NA	NA	MuxC	NA	NC_002516.2	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;monobactam;tetracycline antibiotic;aminocoumarin antibiotic	antibiotic efflux
+ARO:3000805	NA	NA	NA	NA	OprN	NA	NC_002516	resistance-nodulation-cell division (RND) antibiotic efflux pump	fluoroquinolone antibiotic;diaminopyrimidine antibiotic;phenicol antibiotic	antibiotic efflux
+ARO:3003923	NA	NA	NA	NA	oqxB	NA	NC_010378.1	resistance-nodulation-cell division (RND) antibiotic efflux pump	fluoroquinolone antibiotic;glycylcycline;tetracycline antibiotic;diaminopyrimidine antibiotic;nitrofuran antibiotic	antibiotic efflux
+ARO:3003052	NA	NA	NA	NA	smeB	NA	AF173226	resistance-nodulation-cell division (RND) antibiotic efflux pump	aminoglycoside antibiotic;cephalosporin;cephamycin;penam	antibiotic efflux
+ARO:3003056	NA	NA	NA	NA	smeE	NA	AJ252200	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;fluoroquinolone antibiotic;tetracycline antibiotic;phenicol antibiotic	antibiotic efflux
+ARO:3003057	NA	NA	NA	NA	smeF	NA	AJ252200	resistance-nodulation-cell division (RND) antibiotic efflux pump	macrolide antibiotic;fluoroquinolone antibiotic;tetracycline antibiotic;phenicol antibiotic	antibiotic efflux
+ARO:3003067	NA	NA	NA	NA	smeS	NA	AF173226	resistance-nodulation-cell division (RND) antibiotic efflux pump	aminoglycoside antibiotic;cephalosporin;cephamycin;penam	antibiotic efflux
+ARO:3004033	NA	NA	NA	NA	tetB(46)	NA	HQ652506.1	ATP-binding cassette (ABC) antibiotic efflux pump	tetracycline antibiotic	antibiotic efflux
+ARO:3003679	NA	NA	NA	NA	TriA	NA	NC_002516.2	resistance-nodulation-cell division (RND) antibiotic efflux pump	triclosan	antibiotic efflux
