@@ -315,9 +315,9 @@ k.filt.clr <- apply(k.filt, MARGIN = c(1,2), FUN = function(x) x+1)
 k.filt.clr <- as.data.frame(t(apply(k.filt.clr, 1, function(x){log(x) - mean(log(x))})))
 k.filt.euc <- vegdist(k.filt.clr, method = "euclidean")
 k.filt.euc.nmds <- metaMDS(k.filt.euc, k = 3, try = 20, trymax = 150, maxit = 2000)
-# solution readed run 58
+
 k.filt.euc.nmds$stress
-# 0.1107965
+# 0.1108
 k.filt.euc.nmds.scores <- as.data.frame(scores(k.filt.euc.nmds))
 k.filt.euc.nmds.scores$SampleID <- row.names(k.filt.euc.nmds.scores)
 k.filt.euc.nmds.scores <- merge(k.filt.euc.nmds.scores, amr.meta, by = "SampleID")
@@ -445,7 +445,12 @@ ua.amr.meta[which(!ua.amr.meta$Spec.known.locality & ua.amr.meta$Spec.county == 
 ua.amr.meta[which(!ua.amr.meta$Spec.known.locality & ua.amr.meta$Spec.county == "Norrbotten"),
             c("Spec.longitude","Spec.latitude")] <- as.data.frame(matrix(c(67.0,67.0,67.0,67.0,21.0,21.5,22,22.5), ncol = 2))
 
-
+# Basic information on bears for results & methods
+summary(ua.amr.meta$Spec.coll.year)
+table(ua.amr.meta$Spec.coll.year.type)
+table(ua.amr.meta$Spec.sex)
+table(ua.amr.meta$Spec.age.years)
+summary(as.numeric(ua.amr.meta[which(!ua.amr.meta$Spec.age.years %in% c("Adult","notAdult","unknown")),"Spec.age.years"]))
 
 ##### AMR analysis - processing #####
 # AMR processing of blast CARD results
@@ -762,7 +767,7 @@ fig.human.b <- ggplot(oral.amrfam.cts, aes(Spec.HumanFootprint.mean, Total.AMR.p
   theme_classic() + theme(axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
                           legend.position = "none")
 
-tiff("figures/Figure_2_HumanImpact_vs_AMRload.tiff", units = "in", width = 5, height = 6, res = 600, compression = "zip")
+tiff("figures/Figure_3_HumanImpact_vs_AMRload.tiff", units = "in", width = 5, height = 6, res = 600, compression = "zip")
 plot_grid(fig.human.a, fig.human.b, nrow = 2, axis = "lr", labels = c("a","b"))
 dev.off()
 
@@ -874,7 +879,7 @@ table(arg.readbased$Spec.Period)
 arg.num.subsample.READS <- arg_num_subsample_f(arg.readbased, "Spec.Period", "AMR.Gene.Family", 500, 1000, F)
 arg.num.subsample.READS$Spec.Period <- factor(arg.num.subsample.READS$Variable, levels = levels(oral.amrfam.cts$Spec.Period), ordered = T)
 
-tiff("figures/Supp_Figure_S5_ARGdiversity_subsample_reads.tiff", units = "in", width = 5.5, height = 5.5, res = 600, compression = "zip")
+tiff("figures/Supp_Figure_S2_ARGdiversity_subsample_reads.tiff", units = "in", width = 5.5, height = 5.5, res = 600, compression = "zip")
 ggplot(arg.num.subsample.READS, aes(Spec.Period, Test))+
   geom_boxplot(outlier.colour = NA)+
   geom_point(aes(color = Spec.Period), size = 2, position = position_jitterdodge(jitter.width = 1))+
@@ -912,15 +917,7 @@ for (x in levels(arg.num.subsample.SAMPLES$Spec.Period)){
 }
 
 ##### ARG family changes over time #####
-# Supp Figure 2 composite - ARG family over time
-Sfig.arg.num.subreads <- ggplot(arg.num.subsample.READS, aes(Spec.Period, Test))+
-  geom_boxplot(outlier.colour = NA)+
-  geom_point(aes(color = Spec.Period), size = 2, position = position_jitterdodge(jitter.width = 1))+
-  scale_color_manual(values = spec.period.cols)+
-  scale_y_continuous(limits = c(0,16))+
-  scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family number")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+# Supp Figure 3 composite - ARG family over time (excluding RND changes)
 
 Sfig.arg.abcf <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.ABCF))+
   geom_boxplot(outlier.colour = NA)+
@@ -928,8 +925,8 @@ Sfig.arg.abcf <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.ABCF))+
   scale_shape_manual(values = c(21:25))+
   scale_fill_manual(values = spec.period.cols)+
   scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+  labs(x = "", y = "ARG family load", title = "ABC-F ribosomal protection protein")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
 
 Sfig.arg.rpoB <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.rpoB))+
   geom_boxplot(outlier.colour = NA)+
@@ -937,17 +934,8 @@ Sfig.arg.rpoB <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.rpoB))+
   scale_shape_manual(values = c(21:25))+
   scale_fill_manual(values = spec.period.cols)+
   scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
-
-Sfig.arg.RND <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.RND))+
-  geom_boxplot(outlier.colour = NA)+
-  geom_point(aes(fill = Spec.Period, shape = Spec.Period), size = 2, position = position_jitterdodge())+
-  scale_shape_manual(values = c(21:25))+
-  scale_fill_manual(values = spec.period.cols)+
-  scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+  labs(x = "", y = "ARG family load", title = "rifamycin-resistant rpoB")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
 
 Sfig.arg.ileS <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.ileS))+
   geom_boxplot(outlier.colour = NA)+
@@ -955,8 +943,8 @@ Sfig.arg.ileS <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.ileS))+
   scale_shape_manual(values = c(21:25))+
   scale_fill_manual(values = spec.period.cols)+
   scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+  labs(x = "", y = "ARG family load", title = "resistant ileS")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
 
 Sfig.arg.ABC <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.ABC))+
   geom_boxplot(outlier.colour = NA)+
@@ -964,8 +952,8 @@ Sfig.arg.ABC <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.ABC))+
   scale_shape_manual(values = c(21:25))+
   scale_fill_manual(values = spec.period.cols)+
   scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+  labs(x = "", y = "ARG family load", title = "ABC efflux pump")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
 
 Sfig.arg.lipA <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.lipA))+
   geom_boxplot(outlier.colour = NA)+
@@ -973,8 +961,8 @@ Sfig.arg.lipA <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.lipA))+
   scale_shape_manual(values = c(21:25))+
   scale_fill_manual(values = spec.period.cols)+
   scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+  labs(x = "", y = "ARG family load", title = "lipid A phosphotase (pgpB)")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
 
 Sfig.arg.parY <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.parY))+
   geom_boxplot(outlier.colour = NA)+
@@ -982,14 +970,9 @@ Sfig.arg.parY <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.parY))+
   scale_shape_manual(values = c(21:25))+
   scale_fill_manual(values = spec.period.cols)+
   scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
-  labs(x = "", y = "ARG family load")+
-  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), legend.position = "none")
+  labs(x = "", y = "ARG family load", title = "aminocoumarin resistant parY")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
 
-tiff("figures/Supp_Figure_S2_ARG_load_changes.tiff", units = "in", width = 12, height = 6, res = 600, compression = "zip")
-plot_grid(Sfig.arg.num.subreads, Sfig.arg.RND, Sfig.arg.abcf, Sfig.arg.rpoB,
-          Sfig.arg.ileS, Sfig.arg.parY, Sfig.arg.lipA, Sfig.arg.ABC,
-          ncol = 4, align = "hv", axis = "tblr")
-dev.off()
 
 # SUPP TABLE S1
 summary(glm(ARG.ABCF ~ Spec.Period + DNA.fragment.length.median.oral, 
@@ -1080,6 +1063,7 @@ k.oral.bears.euc.nmds.scores <- as.data.frame(scores(k.oral.bears.euc.nmds))
 k.oral.bears.euc.nmds.scores$SampleID <- row.names(k.oral.bears.euc.nmds.scores)
 k.oral.bears.euc.nmds.scores <- merge(k.oral.bears.euc.nmds.scores, oral.amrfam.cts, by = "SampleID")
 
+
 Sfig.oral.ord.a <- ggplot(k.oral.bears.euc.nmds.scores,aes(NMDS1, NMDS2,fill=Spec.Period, shape=Spec.Period))+
   geom_vline(xintercept = 0, linetype = 3, size = 1, color = "grey42") + geom_hline(yintercept = 0, linetype = 3, size = 1, color = "grey42")+
   geom_point(size = 4)+
@@ -1150,16 +1134,166 @@ Sfig.oral.ord.d <- ggplot(k.oral.bears.jac.nmds.scores,aes(NMDS1, NMDS2, color=T
 adonis(k.oral.bears.jac ~ k.oral.bears.jac.nmds.scores$Spec.Period, permutations = 1000)
 adonis(k.oral.bears.jac ~ k.oral.bears.jac.nmds.scores$Total.AMR.prop, permutations = 1000)
 
-# Supp Figure S2 composite
-tiff("figures/Supp_Figure_S2_NMDS_BearsOral_composite.tiff", units = "in", width = 12, height = 8, res = 600, compression = "zip")
-plot_grid((Sfig.oral.ord.a + labs(title="Abundance") + theme(legend.position = "none", plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))), 
-          (Sfig.oral.ord.b + labs(title="Presence/absence") + theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))), 
-          Sfig.oral.ord.l1,
-          (Sfig.oral.ord.c + theme(legend.position = "none")),
-          Sfig.oral.ord.d, Sfig.oral.ord.l2,
-          nrow = 2, rel_widths = c(1,1,0.3,1,1,0.3),
-          labels = c("a","b","","c","d",""), 
-          label_y = c(0.94,0.94,1,1,1,1))
+##### oral bacterial genera correlations with ARGs #####
+k.oral.genus.prop.bears <- k.oral.genus.prop[sample.id.byyear,]
+k.oral.genus.prop.bears <- k.oral.genus.prop.bears[,colSums(k.oral.genus.prop.bears) > 0]
+
+# correlations between the four most abundant ARGs and bacteria genus abundance
+crepe.out <- ccrepe(x = oral.amrfam.prop[,c("ARG.ABCF","ARG.ileS","ARG.RND","ARG.rpoB")],
+                    y = k.oral.genus.prop.bears,
+                    sim.score = nc.score, iterations = 20, min.subj = 20, verbose = T)
+crepe.out.m <- merge(melt(crepe.out$q.values, id.vars = row.names(crepe.out$q.values), value.name = "q.value"),
+                     melt(crepe.out$sim.score, id.vars = row.names(crepe.out$sim.score), value.name = "sim.score"),
+                     by = c("Var1","Var2"))
+names(crepe.out.m)[1:2] <- c("ARG.class","Genus")
+crepe.out.m[which(crepe.out.m$q.value < 0.05 & crepe.out.m$sim.score > 0),]
+
+# Supp Figure 3 plots
+k.genus.arg <- k.oral.genus.prop[,c("Neisseria","Parvimonas","Actinomyces","Gemella")]
+k.genus.arg$SampleID <- row.names(k.genus.arg)
+k.genus.arg <- merge(k.genus.arg, oral.amrfam.prop[,c("SampleID","ARG.ABCF","ARG.ileS","ARG.ABC","ARG.RND","ARG.rpoB","Spec.Period","DNA.fragment.length.median.oral","Reads.n.oral.bacteria")],
+                     by = "SampleID")
+k.genus.arg$Bracken.oral.ct <- sapply(k.genus.arg$SampleID, function(x){
+  k.oral.genus[which(k.oral.genus$SampleID == x),"Bracken.oral.ct"]
+})
+
+Sfig.gen.actino <- ggplot(k.genus.arg, aes(Spec.Period, Actinomyces))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point(aes(fill = Spec.Period, shape = Spec.Period), size = 2, position = position_jitterdodge())+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
+  labs(x = "", y = "Genus relative abundance", title = "Actinomyces")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+Sfig.gen.parvi <- ggplot(k.genus.arg, aes(Spec.Period, Parvimonas))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point(aes(fill = Spec.Period, shape = Spec.Period), size = 2, position = position_jitterdodge())+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
+  labs(x = "", y = "Genus relative abundance", title = "Parvimonas")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+Sfig.gen.gamella <- ggplot(k.genus.arg, aes(Spec.Period, Gemella))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point(aes(fill = Spec.Period, shape = Spec.Period), size = 2, position = position_jitterdodge())+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  scale_x_discrete(labels = c("pre \n1951","1951-\n1970","1971-\n1985","1986-\n2000","post\n2000"))+
+  labs(x = "", y = "Genus relative abundance", title = "Gemella")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+lm.abcf <- lm(ARG.ABCF ~ Actinomyces, data=k.genus.arg)
+Sfig.cor.abcf <- ggplot(k.genus.arg, aes(Actinomyces, ARG.ABCF))+
+  geom_abline(slope = lm.abcf$coefficients[[2]], intercept = lm.abcf$coefficients[[1]], color = "grey66", linetype=1, size = 1)+
+  geom_point(size = 2, color = "black")+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  labs(x = "Genus relative abundance", y = "ARG family load", title = "ABC-F vs Actinomyces")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+lm.rpob <- lm(ARG.rpoB ~ Actinomyces, data=k.genus.arg)
+Sfig.cor.rpoB <- ggplot(k.genus.arg, aes(Actinomyces, ARG.rpoB))+
+  geom_abline(slope = lm.rpob$coefficients[[2]], intercept = lm.rpob$coefficients[[1]], color = "grey66", linetype=1, size = 1)+
+  geom_point(size = 2, color = "black")+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  labs(x = "Genus relative abundance", y = "ARG family load", title = "rpoB vs Actinomyces")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+lm.parvi <- lm(ARG.ileS ~ Parvimonas, data=k.genus.arg)
+Sfig.cor.parvi <- ggplot(k.genus.arg, aes(Parvimonas, ARG.ileS))+
+  geom_abline(slope = lm.parvi$coefficients[[2]], intercept = lm.parvi$coefficients[[1]], color = "grey66", linetype=1, size = 1)+
+  geom_point(size = 2, color = "black")+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  labs(x = "Genus relative abundance", y = "ARG family load", title = "ileS vs Parvimonas")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+lm.gem <- lm(ARG.ileS ~ Gemella, data=k.genus.arg)
+Sfig.cor.gem <- ggplot(k.genus.arg, aes(Gemella, ARG.ileS))+
+  geom_abline(slope = lm.gem$coefficients[[2]], intercept = lm.gem$coefficients[[1]], color = "grey66", linetype=1, size = 1)+
+  geom_point(size = 2, color = "black")+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  labs(x = "Genus relative abundance", y = "ARG family load", title = "ileS vs Gemella")+
+  theme_classic() + theme(axis.text = element_text(colour = "black", size = 10), plot.title = element_text(size = 11, face = "bold"), legend.position = "none")
+
+# Figure 2
+fig.arg.RND <- ggplot(oral.amrfam.prop, aes(Spec.Period, ARG.RND))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point(aes(fill = Spec.Period, shape = Spec.Period), size = 2, position = position_jitterdodge())+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  geom_vline(xintercept = 1.5, color = "grey50", linetype = 2)+
+  geom_vline(xintercept = 2.5, color = "grey50", linetype = 2)+
+  geom_vline(xintercept = 3.5, color = "grey50", linetype = 2)+
+  geom_vline(xintercept = 4.5, color = "grey50", linetype = 2)+
+  scale_x_discrete(labels = c("pre 1951","1951-1970","1971-1985","1986-2000","post 2000"))+
+  labs(x = "Time period", y = "RND family load")+
+  theme_classic() + theme(axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11),
+                          legend.position = "none", axis.text.x = element_text(size = 9))
+
+fig.gen.neiss <- ggplot(k.genus.arg, aes(Spec.Period, Neisseria))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point(aes(fill = Spec.Period, shape = Spec.Period), size = 2, position = position_jitterdodge())+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  geom_vline(xintercept = 1.5, color = "grey50", linetype = 2)+
+  geom_vline(xintercept = 2.5, color = "grey50", linetype = 2)+
+  geom_vline(xintercept = 3.5, color = "grey50", linetype = 2)+
+  geom_vline(xintercept = 4.5, color = "grey50", linetype = 2)+
+  scale_x_discrete(labels = c("pre 1951","1951-1970","1971-1985","1986-2000","post 2000"))+
+  labs(x = "Time period", y = "Neisseria relative abundance")+
+  theme_classic() + theme(axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11),
+                          legend.position = "none", axis.text.x = element_text(size = 10))
+
+lm.rnd <- lm(ARG.RND ~ Neisseria, data=k.genus.arg)
+fig.cor.rnd <- ggplot(k.genus.arg, aes(Neisseria, ARG.RND))+
+  geom_abline(slope = lm.rnd$coefficients[[2]], intercept = lm.rnd$coefficients[[1]], color = "grey66", linetype=1, size = 1)+
+  geom_point(size = 2, color = "black")+
+  scale_shape_manual(values = c(21:25))+
+  scale_fill_manual(values = spec.period.cols)+
+  labs(x = "Neisseria relative abundance", y = "RND family load")+
+  theme_classic() + theme(axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11),
+                          legend.position = "none", axis.text.x = element_text(size = 10))
+
+fig3.p1 <- plot_grid(fig.arg.RND, fig.gen.neiss, fig.cor.rnd,
+                     nrow = 1, align = "hv", axis = "tblr",
+                     rel_widths = c(1,1,0.75))
+
+fig3.leg <- plot_grid(Sfig.oral.ord.l1, 
+                      Sfig.oral.ord.l2, 
+                      nrow = 2, align = "hv", axis = "tblr")
+
+tiff("figures/Figure_2_ARG_family_and_oral_bacteria.tiff", units = "in", width = 12, height = 8.5, res = 600, compression = "zip")
+plot_grid(fig.arg.RND, fig.gen.neiss, fig.cor.rnd,
+          Sfig.oral.ord.a + theme(legend.position = "none", axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11), panel.border = element_rect()),
+          Sfig.oral.ord.c + theme(legend.position = "none", axis.text = element_text(size = 10, colour = "black"), axis.title = element_text(size = 11), panel.border = element_rect()),
+          fig3.leg,
+          nrow = 2, rel_widths = c(1,1,0.75,1,1,0.75),
+          align = "hv", axis = "tblr")
+dev.off()
+
+# Supp Figure 3
+Sfig.arg.all <- plot_grid(Sfig.arg.ABC, Sfig.arg.lipA, Sfig.arg.parY,
+                          Sfig.arg.abcf, Sfig.arg.rpoB, Sfig.arg.ileS,
+                          Sfig.gen.actino, Sfig.gen.parvi, Sfig.gen.gamella,
+                          labels = c("A","B","C","D","E","F","G","H","I"),
+                          ncol = 3, align = "hv", axis = "tblr")
+
+Sfig.cor.all <- plot_grid(Sfig.cor.abcf, Sfig.cor.rpoB, Sfig.cor.parvi, Sfig.cor.gem,
+                          labels = c("J","K","L","M"), nrow = 1, align = "hv", axis = "tblr")
+
+Sfig.oral.ord.presence <- plot_grid((Sfig.oral.ord.b + theme(legend.position = "none")), Sfig.oral.ord.l1, NULL,
+                                    (Sfig.oral.ord.d + theme(legend.position = "none")), Sfig.oral.ord.l2, NULL,
+                                    labels = c("O","","","P","",""),
+                                    nrow = 1, rel_widths = c(1,0.5,0.5,1,0.5,0.5))
+
+tiff("figures/Supp_Figure_S3_ARG_family_and_oral_genera.tiff", units = "in", width = 12, height = 12, res = 600, compression = "zip")
+plot_grid(Sfig.arg.all, Sfig.cor.all, Sfig.oral.ord.presence,
+          nrow = 3, align = "hv", axis = "tblr", rel_heights = c(3,1,1.5))
 dev.off()
 
 ##### END #####
