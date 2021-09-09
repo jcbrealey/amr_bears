@@ -10,4 +10,4 @@ Following the advent of industrial-scale antibiotic production in the 1940s, ant
 
 Raw sequencing data are available from ENA project [PRJEB42014](https://www.ebi.ac.uk/ena/browser/view/PRJEB42014).
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106420.svg)](https://doi.org/10.5281/zenodo.5106420)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5498303.svg)](https://doi.org/10.5281/zenodo.5498303)
