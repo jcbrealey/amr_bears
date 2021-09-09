@@ -212,21 +212,18 @@ arg_num_subsample_SAMPLES_f <- function(data, strata.var, ARG.cols, depth, perm,
 
 
 ##### meta data ##### 
-amr.meta <- read.csv("data/DC_AMR_sample_metadata_210617.csv", sep = ",", header = TRUE)
+amr.meta <- read.csv("data/DC_AMR_sample_metadata_210909.csv", sep = ",", header = TRUE)
 row.names(amr.meta) <- amr.meta$SampleID
 
 bears.sequenced <- as.character(amr.meta[which(amr.meta$Sample.type == "Bear"),"SampleID"])
 summary(amr.meta[bears.sequenced,"Reads.n.nonhost"])
-"     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-       34   3869741  15725987  24458284  33679301 186110222 "
 
 # set up variables
 amr.meta$Spec.Period <- factor(amr.meta$Spec.Period, 
-                               levels=c("pre1950","1950.7","1970.85","1985","2000.2","blanks"), 
+                               levels=c("pre1950","1950.70","1970.85","1985.00","2000.20","blanks"), 
                                ordered = TRUE)
-levels(amr.meta$Spec.Period) <- c("pre1950","1950.70","1970.85","1985.00","2000.20","blanks")
 amr.meta$Sample.type <- factor(amr.meta$Sample.type,
-                               levels=c("Bear","Swab","Ext.blank","LP.blank"))
+                               levels=c("Bear","Ext.blank","LP.blank","Swab"))
 amr.meta$Ext.batch <- as.factor(amr.meta$Ext.batch)
 amr.meta$LP.batch <- as.factor(amr.meta$LP.batch)
 amr.meta$IN.batch <- as.factor(amr.meta$IN.batch)
@@ -393,6 +390,7 @@ ggplot(amr.meta.filt, aes(Sample.type, Reads.prop.oral.bacteria))+
   theme_classic() + theme(axis.text = element_text(size = 12, colour = "black"), axis.title = element_text(size = 13),
                           legend.position = "none")
 
+amr.meta.filt$Sample.type <- factor(amr.meta.filt$Sample.type, levels = c("Bear","Swab","Ext.blank","LP.blank"))
 tiff("figures/Supp_Figure_S1_OralBacteriaReads.tiff", units = "in", width = 6, height = 4, res = 600, compression = "zip")
 ggplot(amr.meta.filt, aes(Sample.type, Reads.n.oral.bacteria))+
   geom_boxplot(outlier.colour = NA)+
